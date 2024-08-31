@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--
+      If you are serving your web app in a path other than the root, change the
+      href value below to reflect the base path you are serving from.
+
+      The path provided below has to start and end with a slash "/" in order for
+      it to work correctly.
+
+      For more details:
+      * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+      This is a placeholder for base href that will be replaced by the value of
+      the `--base-href` argument provided to `flutter build`.
+    -->
+    <base href="$FLUTTER_BASE_HREF">
+
+    <meta charset="UTF-8">
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+    <meta name="description" content="A new Flutter project.">
+
+    <!-- iOS meta tags & icons -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="in_app_web_view">
+    <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png"/>
+
+    <title>in_app_web_view</title>
+    <link rel="manifest" href="manifest.json">
+
+    <script type="application/javascript" src="/assets/web_support.js" defer></script>
+<!--    <script type="application/javascript" src="/assets/packages/flutter_inappwebview/assets/web/web_support.js" defer></script>-->
+    <script>
+        // The value below is injected by flutter build, do not touch.
+        const serviceWorkerVersion = null;
+    </script>
+    <!-- This script adds the flutter initialization JS code -->
+    <script src="flutter.js" defer></script>
+    <style>
+        #flutter_target {
+            position: absolute;
+            top: 200px;
+            left: 500px;
+            transform-origin: 0px 0px 0px;
+            transform: rotate(-14.1deg) scale(0.80) translate(-539px, -45px);
+            width: 316px;
+            height: 678px;
+            border-radius: 34px;
+            border: 1px solid #000;
+            overflow: hidden;
+        }
+        #counter {
+            padding-left: 8px;
+        }
+    </style>
+</head>
+<body>
+<section class="contents">
+    <article>
+        <h3>App</h3>
+        <div style="border:solid #ccc 1px" id="flutter_target"></div>
+    </article>
+
+    <aside id="demo_controls">
+        <h1>Element embedding</h1>
+        <fieldset id="interop">
+            <legend>JS Interop</legend>
+            <input
+                    id="increment"
+                    value="Increment"
+                    type="button"
+            />
+            <span id="counter"></span>
+        </fieldset>
+    </aside>
+</section>
+<script>
+    window.addEventListener('load', function(ev) {
+      // Download main.dart.js
+      let target = document.querySelector("#flutter_target");
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          serviceWorkerVersion: serviceWorkerVersion,
+        },
+        onEntrypointLoaded: function(engineInitializer) {
+          engineInitializer.initializeEngine({
+              hostElement: target,
+            }).then(function(appRunner) {
+            appRunner.runApp();
+          });
+        }
+      });
+
+      // This function will be called from Flutter when it prepares the JS-interop.
+      window._stateSet = function () {
+
+        window._stateSet = function () {
+          console.log("Call _stateSet only once!");
+        };
+
+        // The state of the flutter app, see `class _MyAppState` in lib/main.dart.
+        let appState = window._appState;
+
+        let updateState = function (args) {
+          document.getElementById('counter').innerText = appState.count;
+          console.log(`==> Counter: ${appState.count} : ${args}`);
+        };
+
+        // Register a callback to update the HTML field from Flutter.
+        appState.addHandler(updateState);
+
+        // Render the first value (0).
+        updateState();
+
+        let incrementButton = document.querySelector("#increment");
+        incrementButton.addEventListener("click", (event) => {
+          appState.increment();
+        });
+
+        // Enables/disables the Value/Increment controls.
+        function setJsInteropControlsEnabled(enabled) {
+          let elements = document.querySelectorAll("#increment, label[for='value']");
+          elements.forEach((el) => {
+            el.classList.toggle('disabled', !enabled);
+          })
+        }
+      };
+    });
+</script>
+</body>
+</html>
