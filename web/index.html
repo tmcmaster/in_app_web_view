@@ -58,6 +58,9 @@
         #counter {
             padding-left: 8px;
         }
+        body {
+            display: flex;
+        }
     </style>
 </head>
 <body>
@@ -70,16 +73,13 @@
     <aside id="demo_controls">
         <h1>Element embedding</h1>
         <fieldset id="interop">
-            <legend>JS Interop</legend>
-            <input
-                    id="increment"
-                    value="Increment"
-                    type="button"
-            />
+            <legend>Outer HTML PAGE</legend>
+            <input id="increment" value="Increment" type="button" />
             <span id="counter"></span>
         </fieldset>
     </aside>
 </section>
+<!--<iframe id="flutter_inappwebview-0"></iframe>-->
 <script>
     window.addEventListener('load', function(ev) {
       // Download main.dart.js
