@@ -40,6 +40,11 @@ dependencies:
   cached_network_image: ^3.4.0
   js: ^0.6.7
   logger: ^2.4.0
+  webview_flutter: ^4.8.0
+  share_plus: ^10.0.0
+  connectivity_plus: ^3.0.2
+  url_launcher: ^6.1.6
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:

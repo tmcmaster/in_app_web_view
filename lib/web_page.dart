@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:in_app_web_view/log.dart';
 
 class WebPage extends StatefulWidget {
   static final keepAlive = InAppWebViewKeepAlive();
@@ -14,8 +13,6 @@ class WebPage extends StatefulWidget {
 }
 
 class _WebPageState extends State<WebPage> {
-  static final log = Log.d();
-
   static const inlineHtml = true;
 
   @override
@@ -23,39 +20,42 @@ class _WebPageState extends State<WebPage> {
     super.initState();
   }
 
-  // late InAppWebViewController _webViewController;
-
   @override
   Widget build(BuildContext context) {
-    log.d('WebPage building');
+    print('WebPage building');
     return Scaffold(
       body: Column(
         children: [
           Expanded(
             child: InAppWebView(
               key: GlobalKey(),
-
-              // keepAlive: keepAlive,
               initialData: inlineHtml
                   ? InAppWebViewInitialData(
-                data: """
+                      data: """
                   <html lang="en">
                     <head>
                       <title>Embedded HTML File</title>
                       <script>
-                        // window.addEventListener("flutterInAppWebViewPlatformReady", function(event) {
-                        //   console.log('AAAAAAA ', window.flutter_inappwebview);
-                        //   console.log('flutterInAppWebViewPlatformReady');
-                        //   window.flutter_inappwebview.callHandler('handlerFoo')
-                        //     .then(function(result) {
-                        //       // print to the console the data coming
-                        //       // from the Flutter side.
-                        //       console.log('AAAA', JSON.stringify(result));
-                        //       window.flutter_inappwebview.callHandler(
-                        //         'handlerFooWithArgs', 1, true, ['bar', 5], {foo: 'baz'}, result
-                        //       );
-                        //   });
-                        // });
+                        window.addEventListener("flutterInAppWebViewPlatformReady", function(event) {
+                          console.log('--------->>>>>>>   AAAAAAA ', window.flutter_inappwebview);
+                        });
+                        setTimeout(() => {
+                          console.log('-----> testing console from inner HTML page.');
+                        }, 1000);
+                        setTimeout(() => {
+                          throw new Error('-----> testing error from inner HTML page.');
+                        }, 2000);
+                        
+                        window.addEventListener('load', function(ev) {
+                          document.getElementById('increment').addEventListener('click', (event) => {
+                            console.log('Incrementing: ', event);
+                            window.parent.postMessage('dsfdsfsdf', '*');
+                          });
+                          window.addEventListener('message', (event) => {
+                              console.log('Message received in iframe:', event);
+                              document.getElementById('counter').innerText = event.data;
+                          });
+                        });
                       </script>
                     </head>
                     <body>
@@ -68,48 +68,50 @@ class _WebPageState extends State<WebPage> {
                     </body>
                   </html>
                 """,
-              )
+                    )
                   : null,
+
+              shouldInterceptRequest: (c, r) {
+                print('Request: $r');
+                return Future.value(null);
+              },
+
               initialUrlRequest: inlineHtml
                   ? null
                   : URLRequest(
-                url: WebUri('https://example.com'),
-              ),
+                      url: WebUri('https://example.com'),
+                    ),
+
               onProgressChanged: (c, p) {
-                log.d('=======> Progress: $p');
+                print('=======> Progress: $p');
+              },
+
+              onLoadResource: (c,r) {
+                print('=======> onLoadResource:');
+              },
+              onDownloadStartRequest: (c, a) {
+                print('=======> onDownloadStartRequest:');
+              },
+              onContentSizeChanged: (c, f, t) {
+                print('=======> onContentSizeChanged: $f : $t');
+              },
+              onCloseWindow: (c) {
+                print('=======> onCloseWindow:');
               },
               onLoadStop: (c, u) {
-                log.d('=======> onLoadStop: $u');
+                print('=======> onLoadStop: $u');
               },
               onLoadStart: (controller, u) {
-                log.d('=======> onLoadStart: $u');
+                print('=======> onLoadStart: $u');
               },
               onWebViewCreated: (controller) async {
-                // _webViewController = controller;
-                // Future.delayed(const Duration(seconds: 1), () async {
-                //   final title = await _webViewController.getTitle();
-                //   log.d('TITLE: $title');
-                // });
-
-                log.d('onWebViewCreated');
-                // var a = await controller.evaluateJavascript(source: """
-                //   const args = [1, true, ['bar', 5], {foo: 'baz'}];
-                //   window.flutter_inappwebview.callHandler('myHandlerName', ...args);
-                // """);
-                // log.d('RESPONSE: $a');
-                // controller.addJavaScriptHandler(handlerName: 'handlerFoo', callback: (args) {
-                //   log.d('handlerFoo: $args');
-                //   return {
-                //     'bar': 'bar_value', 'baz': 'baz_value'
-                //   };
-                // });
-                //
-                // controller.addJavaScriptHandler(handlerName: 'handlerFooWithArgs', callback: (args) {
-                //   log.d('handlerFooWithArgs: $args');
-                // });
+                print('=======> onWebViewCreated');
               },
               onConsoleMessage: (controller, consoleMessage) {
-                log.d('onConsoleMessage $consoleMessage');
+                print('=======> onConsoleMessage $consoleMessage');
+              },
+              onReceivedError: (controller, request, error) {
+                print("=======> Failed to load: $error");
               },
             ),
           ),

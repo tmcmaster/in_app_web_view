@@ -8,9 +8,9 @@ void main() async {
   var log = Log.d();
 
   log.d('MAIN building');
-  FlutterError.onError = (error) {
-    log.e('========== ERROR =========== $error');
-  };
+  // FlutterError.onError = (error) {
+  //   log.e('========== ERROR =========== $error');
+  // };
 
   runApp(
     const CounterApp(

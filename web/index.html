@@ -35,7 +35,6 @@
     <link rel="manifest" href="manifest.json">
 
     <script type="application/javascript" src="/assets/web_support.js" defer></script>
-<!--    <script type="application/javascript" src="/assets/packages/flutter_inappwebview/assets/web/web_support.js" defer></script>-->
     <script>
         // The value below is injected by flutter build, do not touch.
         const serviceWorkerVersion = null;
@@ -74,7 +73,7 @@
         <h1>Element embedding</h1>
         <fieldset id="interop">
             <legend>Outer HTML PAGE</legend>
-            <input id="increment" value="Increment" type="button" />
+            <input id="increment" value="Increment" type="button"/>
             <span id="counter"></span>
         </fieldset>
     </aside>
@@ -120,7 +119,13 @@
 
         let incrementButton = document.querySelector("#increment");
         incrementButton.addEventListener("click", (event) => {
-          appState.increment();
+            appState.increment();
+<!--            const iframe = document.querySelector('#flutter_inappwebview-0');-->
+            const iframe = document.querySelector('iframe');
+            console.log('------> IFRAME: ', iframe);
+            if (iframe) {
+                iframe.contentWindow.postMessage(appState.count,'*');
+            }
         });
 
         // Enables/disables the Value/Increment controls.
@@ -130,7 +135,28 @@
             el.classList.toggle('disabled', !enabled);
           })
         }
+
+        window.addEventListener('message', (event) => {
+            // Verify the origin of the message to ensure it's from a trusted source
+            if (event.origin === 'https://trusted-iframe-source.com') {
+                console.log('Message received from iframe:', event.data);
+            } else {
+                console.warn('Received message from untrusted origin:', event.origin);
+                appState.increment();
+            }
+        });
       };
+
+      setTimeout(() => {
+        const iframe = document.querySelector('#flutter_inappwebview-0');
+        console.log('------> IFRAME: ', iframe);
+        iframe.contentWindow.postMessage(
+            {
+                event_id: 'white_label_message',
+            },
+            '*'
+        );
+      }, 2000);
     });
 </script>
 </body>

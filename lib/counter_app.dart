@@ -24,7 +24,7 @@ class _CounterAppState extends State<CounterApp> {
 
   @override
   void initState() {
-    print('Initialising the App');
+    log.d('Initialising the App');
     final export = js_util.createDartExport(this);
     js_util.setProperty(js_util.globalThis, '_appState', export);
     js_util.callMethod<void>(js_util.globalThis, '_stateSet', []);
@@ -33,7 +33,7 @@ class _CounterAppState extends State<CounterApp> {
 
   @override
   void dispose() {
-    print('Disposing the App');
+    log.d('Disposing the App');
     _streamController.close();
     super.dispose();
   }
@@ -43,7 +43,7 @@ class _CounterAppState extends State<CounterApp> {
 
   @js.JSExport()
   void addHandler(void Function(String event) handler) {
-    print('Handler has been added');
+    log.d('Handler has been added');
     _streamController.stream.listen((event) {
       handler(_counterScreenCount.toString());
     });
@@ -60,13 +60,13 @@ class _CounterAppState extends State<CounterApp> {
 
   @js.JSExport()
   void publishEvent(String message) {
-    print('publishing event: $_counterScreenCount');
+    log.d('publishing event: $_counterScreenCount');
     _streamController.add(message);
   }
 
   @override
   Widget build(BuildContext context) {
-    print('CounterApp building');
+    log.d('CounterApp building');
     return MaterialApp(
       title: 'Testing InAppWebView',
       theme: ThemeData(
