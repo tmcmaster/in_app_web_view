@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:in_app_web_view/log.dart';
+import 'package:in_app_web_view/utils/log.dart';
 
 class ImageExample extends StatelessWidget {
   static final log = Log.d();
