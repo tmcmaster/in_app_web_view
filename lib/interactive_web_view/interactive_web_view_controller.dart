@@ -1,22 +1,22 @@
-import 'package:in_app_web_view/interactive_web_view/event_bus.dart';
+import 'package:in_app_web_view/interactive_web_view/event_bus_flutter.dart';
 import 'package:in_app_web_view/utils/log.dart';
 
 class InteractiveWebViewController {
   static final log = Log.d();
 
   final String name;
-  late EventBus eventBus;
-  final void Function(String)? onEvent;
+  late EventBusFlutter eventBus;
+  final void Function(Map<String, dynamic>)? onEvent;
 
   InteractiveWebViewController({
     required this.name,
     this.onEvent,
   }) {
-    eventBus = EventBus.getInstance(name);
+    eventBus = EventBusFlutter.getInstance(name);
     eventBus.addEventBusListener(receiveEvent);
   }
 
-  void sendEvent(event) {
+  void sendEvent(Map<String, dynamic> event) {
     log.d('InteractiveWebViewController : sendEvent : $event');
     eventBus.emitFromFlutter(event);
   }

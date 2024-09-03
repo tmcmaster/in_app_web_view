@@ -1,0 +1,65 @@
+<html lang="en">
+<head>
+    <title>Embedded HTML</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        h3 {
+            margin: 0;
+            text-align: center;
+        }
+        fieldset {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          gap: 8px;
+        }
+        span {
+            width: 100px;
+            font-size: 24px;
+        }
+    </style>
+    <script type="module">
+        import '/assets/integer_slider.js';
+        import { eventBus } from '/assets/event_bus_iframe.js';
+
+        window.addEventListener('load', function() {
+            const slider = document.getElementById('my-slider');
+
+            eventBus.addEventListener('rotation', (event) => {
+                console.log('Inner HTML: received a rotation event: ', event);
+                const currentValue = slider.value;
+                const newValue = event.value;
+                if (newValue && newValue !== currentValue) {
+                    slider.value = event.data;
+                }
+            });
+
+            slider.addEventListener('value-changed', (e) => {
+                console.log('Inner HTML : slider changed:', e.detail);
+                eventBus.publishEvent({
+                    type: 'rotation',
+                    data: {
+                        rotation: e.detail.value
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<main>
+    <h3>Embedded HTML</h3>
+    <i>This HTML content has been loaded from the application assets.</i>
+    <fieldset id="interop">
+        <legend>Interact with Flutter</legend>
+        <integer-slider id="my-slider" min="-50" max="50" step="5" value="30"></integer-slider>
+    </fieldset>
+</main>
+
+</body>
+</html>

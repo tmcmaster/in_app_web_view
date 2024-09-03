@@ -4,7 +4,14 @@ import 'package:in_app_web_view/utils/log.dart';
 
 void main() async {
   Log.d().d('MAIN Building');
-  runApp(const CounterApp());
+  runApp(MaterialApp(
+      title: 'Testing InAppWebView',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
+        useMaterial3: true,
+      ),
+      debugShowCheckedModeBanner: false,
+      home: const CounterApp()));
 }
 
 

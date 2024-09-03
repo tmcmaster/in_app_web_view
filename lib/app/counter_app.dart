@@ -16,8 +16,13 @@ class CounterApp extends StatefulWidget {
 
 class _CounterAppState extends State<CounterApp> {
   static final log = Log.d();
+
+  static const double minValue = -50;
+  static const double maxValue = 50;
+  static const int increment = 5;
+
   late InteractiveWebViewController controller;
-  int _counter = 0;
+  int _counter = 20;
 
   @override
   void initState() {
@@ -29,12 +34,14 @@ class _CounterAppState extends State<CounterApp> {
     super.initState();
   }
 
-  void onEvent(event) {
-    log.d('CounterApp.onEvent : Initialising the App');
-    setState(() {
-      _counter++;
-    });
-    controller.sendEvent(_counter.toString());
+  void onEvent(Map<String, dynamic> event) {
+    log.d('CounterApp.onEvent : $event');
+    final newValue = event['data']['rotation'];
+    if (newValue != null && newValue != _counter) {
+      setState(() {
+        _counter = newValue;
+      });
+    }
   }
 
   @override
@@ -47,89 +54,84 @@ class _CounterAppState extends State<CounterApp> {
   @override
   Widget build(BuildContext context) {
     log.d('CounterApp.build : building material app');
-    return MaterialApp(
-      title: 'Testing InAppWebView',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Testing InAppWebView'),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  OutlinedButton(
-                    onPressed: () {
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.remove),
+                  onPressed: () {
+                    final newValue = _counter - increment;
+                    if (newValue >= minValue) {
                       setState(() {
-                        _counter++;
+                        _counter = newValue;
                       });
-                      controller.sendEvent('$_counter');
-                    },
-                    child: const Text('Increment'),
-                  ),
-                  const SizedBox(width: 8),
-                  Text('$_counter'),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade400),
-                  ),
-                  child: InteractiveWebView(
-                    controller: controller,
-                    htmlText: """
-                      <html lang="en">
-                        <head>
-                          <title>Embedded HTML</title>
-                          <script>
-                            window.addEventListener('load', function() {
-                              document.getElementById('increment').addEventListener('click', () => {
-                                console.log('Embedded HTML : emitToEventBus : ', event);
-                                window.parent.postMessage('increment', '*');
-                              });
-                              window.addEventListener('message', () => {
-                                console.log('Embedded HTML : listenToEventBus:', event.data);
-                                document.getElementById('counter').innerText = event.data;
-                              });
-                            });
-                          </script>
-                          <style>
-                            fieldset {
-                              display: flex;
-                              flex-direction: row;
-                              justify-content: center;
-                              gap: 8px;
-                            }
-                          </style>
-                        </head>
-                        <body>
-                          <h3>This is HTML that is embedded within a Flutter app.</h3>   
-                          <fieldset id="interop">
-                            <legend>Inner HTML Page</legend>
-                            <input id="increment" value="Increment" type="button"/>
-                            <span id="counter">0</span>
-                          </fieldset>
-                        </body>
-                      </html>
-                    """,
-                  ),
+                      controller.sendEvent(_rotationEvent(newValue));
+                    }
+                  },
+                ),
+                Slider(
+                  min: minValue,
+                  max: maxValue,
+                  divisions: (maxValue - minValue) ~/ increment,
+                  value: _counter.toDouble(),
+                  onChanged: (value) {
+                    final newValue = value.toInt();
+                    if (newValue != _counter) {
+                      setState(() {
+                        _counter = newValue;
+                      });
+                      controller.sendEvent(_rotationEvent(newValue));
+                    }
+                  },
+                ),
+                SizedBox(
+                  width: 24,
+                  child: Text('$_counter'),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: () {
+                    final newValue = _counter + increment;
+                    if (newValue <= maxValue) {
+                      setState(() {
+                        _counter = newValue;
+                      });
+                      controller.sendEvent(_rotationEvent(newValue));
+                    }
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade400),
+                ),
+                child: InteractiveWebView(
+                  controller: controller,
+                  htmlUrl: '/assets/inner_page.html',
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  Map<String, dynamic> _rotationEvent(int degrees) {
+    return {
+      'type': 'rotation',
+      'data': {
+        'rotation': degrees
+      },
+    };
   }
 }
