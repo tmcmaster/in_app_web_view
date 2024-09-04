@@ -17,7 +17,7 @@
     <link rel="icon" type="image/png" href="icons/favicon.png"/>
     <link rel="manifest" href="manifest.json">
 
-    <script type="application/javascript" src="/assets/web_support.js" defer></script>
+    <script type="application/javascript" src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js" defer></script>
 
     <script>
         // The value below is injected by flutter build, do not touch.
@@ -28,8 +28,8 @@
     <script src="flutter.js" defer></script>
 
     <script type="module">
-        import '/assets/integer_slider.js';
-        import { flutterInit } from './lib/flutter_init.js';
+        import '/assets/js/integer_slider.js';
+        import { flutterInit } from '/assets/packages/interactive_web_view/assets/interactive_web_view.js';
 
         flutterInit({ eventBus: true }).then((eventBus) => {
             const slider = document.getElementById('my-slider');

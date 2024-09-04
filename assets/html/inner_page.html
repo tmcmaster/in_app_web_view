@@ -24,8 +24,10 @@
         }
     </style>
     <script type="module">
-        import '/assets/integer_slider.js';
-        import { eventBus } from '/assets/event_bus_iframe.js';
+        import '/assets/js/integer_slider.js';
+        import { useIframeEventBus } from '/assets/packages/interactive_web_view/assets/interactive_web_view.js';
+
+        const eventBus = useIframeEventBus();
 
         window.addEventListener('load', function() {
             const slider = document.getElementById('my-slider');

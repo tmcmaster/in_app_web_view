@@ -167,7 +167,7 @@ packages:
     source: hosted
     version: "3.4.1"
   flutter_inappwebview:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: flutter_inappwebview
       sha256: "3e9a443a18ecef966fb930c3a76ca5ab6a7aafc0c7b5e14a4a850cf107b09959"
@@ -272,6 +272,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
+  interactive_web_view:
+    dependency: "direct main"
+    description:
+      path: "../interactive_web_view"
+      relative: true
+    source: path
+    version: "0.0.1"
   js:
     dependency: "direct main"
     description:
@@ -734,7 +741,7 @@ packages:
     source: hosted
     version: "0.5.1"
   webview_flutter:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: webview_flutter
       sha256: "6869c8786d179f929144b4a1f86e09ac0eddfe475984951ea6c634774c16b522"
