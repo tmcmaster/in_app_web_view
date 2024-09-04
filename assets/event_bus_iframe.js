@@ -20,10 +20,14 @@ class EventBusIframe {
   }
 
   receiveEvent(event) {
-    console.log('EventBusIframe.receiveEvent: ', event);
-    const eventType = event.type;
-    if (!this.events[eventType]) return;
-    this.events[eventType].forEach(listener => listener(event));
+    console.log('EventBusIframe.receiveEvent: ', event.data);
+    const eventType = event.data.type;
+    const listenerList = this.events[eventType];
+    if (listenerList) {
+        listenerList.forEach((listener) => {
+            listener(event.data);
+        });
+    }
   }
 
   publishEvent(event) {

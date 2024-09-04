@@ -31,12 +31,10 @@
             const slider = document.getElementById('my-slider');
 
             eventBus.addEventListener('rotation', (event) => {
-                console.log('Inner HTML: received a rotation event: ', event);
+                console.log('IFRAME: received a rotation event: ', event);
                 const currentValue = slider.value;
-                const newValue = event.value;
-                if (newValue && newValue !== currentValue) {
-                    slider.value = event.data;
-                }
+                const newValue = event.data.rotation;
+                slider.value = event.data.rotation;
             });
 
             slider.addEventListener('value-changed', (e) => {
